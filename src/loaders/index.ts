@@ -12,9 +12,13 @@ export default async ({ expressApp }) => {
     name: 'familyModel',
     model: require('../models/family').default,
   };
+  const assetModel = {
+    name: 'assetModel',
+    model: require('../models/asset').default,
+  };
 
   dependencyInjectorLoader({
-    models: [userModel, familyModel],
+    models: [userModel, familyModel, assetModel],
   });
   Logger.info('✌️ Dependency Injector loaded');
 
