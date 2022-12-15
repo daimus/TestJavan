@@ -4,6 +4,8 @@ import routes from '@/api';
 import config from '@/config';
 import ILooseObject from '@/interfaces/ILooseObject';
 import { isCelebrateError } from 'celebrate';
+import R from '@/R';
+import _ from 'lodash';
 export default ({ app }: { app: express.Application }) => {
   /**
    * Health Check endpoints
@@ -34,6 +36,17 @@ export default ({ app }: { app: express.Application }) => {
   // Load API routes
   app.use(config.api.prefix, routes());
 
+  app.use((data, req, res, next) => {
+    if (data instanceof R) {
+      const result: ILooseObject = {};
+      result.data = data.data;
+      if (!_.isEmpty(data.page)) {
+        result.page = data.page;
+      }
+      return res.status(data.httpCode).json(result);
+    }
+    next(data);
+  });
   /// catch 404 and forward to error handler
   app.use((req, res, next) => {
     const err = new Error('Not Found');
@@ -43,7 +56,6 @@ export default ({ app }: { app: express.Application }) => {
 
   /// error handlers
   app.use((err, req, res, next) => {
-    console.log('error handler');
     if (err.name === 'UnauthorizedError') {
       return res.status(err.status).send({ message: err.message }).end();
     }

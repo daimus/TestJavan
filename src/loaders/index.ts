@@ -6,17 +6,15 @@ import './events';
 export default async ({ expressApp }) => {
   const userModel = {
     name: 'userModel',
-    // Notice the require syntax and the '.default'
     model: require('../models/user').default,
   };
+  const familyModel = {
+    name: 'familyModel',
+    model: require('../models/family').default,
+  };
 
-  // It returns the agenda instance because it's needed in the subsequent loaders
   dependencyInjectorLoader({
-    models: [
-      userModel,
-      // salaryModel,
-      // whateverModel
-    ],
+    models: [userModel, familyModel],
   });
   Logger.info('✌️ Dependency Injector loaded');
 
