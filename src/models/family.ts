@@ -4,7 +4,7 @@ import { IFamily } from '@/interfaces/IFamily';
 
 export interface FamilyInstance extends Model<IFamily>, IFamily {}
 
-const User = sequelize.define<FamilyInstance>(
+const Family = sequelize.define<FamilyInstance>(
   'family',
   {
     id: {
@@ -34,4 +34,4 @@ const User = sequelize.define<FamilyInstance>(
   },
 );
 
-export default User;
+export default Family;
