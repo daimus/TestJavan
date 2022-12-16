@@ -35,3 +35,12 @@ yarn dev
 atau
 npm run dev
 ```
+9. Build aplikasi
+```
+yarn build
+atau
+npm run build
+```
+
+## Demo Aplikasi
+Aplikasi Test Javan dapat diakses melalui link [https://testjavan.daimus.id](https://testjavan.daimus.id)
