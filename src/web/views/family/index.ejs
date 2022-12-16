@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+</head>
+<body>
+<%- include('../partials/header') %>
+
+<main>
+    <section class="py-5 container">
+        <div class="row">
+            <div class="d-flex justify-content-between">
+                <h1>Keluarga</h1>
+                <div>
+                    <a href="/families/create" class="btn btn-primary">Tambah Keluarga</a>
+                </div>
+            </div>
+            <table class="table" id="table">
+                <thead class="table-dark">
+                <tr>
+                    <th>Nama</th>
+                    <th>Jenis Kelamin</th>
+                    <th>Aksi</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<%- include('../partials/javascript') %>
+<script>
+    $(document).ready(function(){
+      load()
+    })
+
+    function load(){
+      $.ajax({
+        url: "/api/families",
+      }).done(function(data, textStatus, jqXHR) {
+        let tbody = '';
+        data.data.forEach(datum => {
+          tbody +=  `<tr>
+            <td>${datum.name}</td>
+            <td>${datum.sex === 'male' ? 'Laki-Laki' : 'Perempuan'}</td>
+            <td>
+              <a href="/families/${datum.id}/assets" class="btn btn-secondary">Manage Aset</a>
+              <a href="/families/${datum.id}/edit" class="btn btn-info">Edit</a>
+              <button type="button" onclick="destroy(${datum.id})" class="btn btn-danger">Hapus</button>
+            </td>
+            </tr>`
+        });
+        $('#table tbody').html(tbody);
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status === 404) {
+          return $("#table tbody").html(`<tr>
+          <td class="text-center" colspan="3"> Data tidak ditemukan</td>
+        </tr>`);
+        }
+      });
+    }
+
+    function destroy(familyId){
+      if (confirm('Apakah anda yakin?')) {
+        $.ajax({
+          url: `/api/families/${familyId}`,
+          method: 'DELETE'
+        }).done(function(data, textStatus, jqXHR) {
+          load()
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          alert('Terjadi keslaahan saat menghapus data')
+        });
+      }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+</head>
+<body>
+<%- include('../partials/header') %>
+
+<main>
+    <section class="py-5 container">
+        <div class="row">
+            <div class="d-flex justify-content-between">
+                <h1>Edit Keluarga</h1>
+            </div>
+            <form id="create-form">
+                <div class="mb-3">
+                    <label class="form-label">Nama</label>
+                    <input type="text" class="form-control" name="name" id="name" value="<%= family.name %>" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Jenis Kelamin</label>
+                    <select name="parent_id" id="parent_id" class="form-select">
+                        <option>Pilih Parent</option>
+                        <% parents.forEach(parent => { %>
+                            <option value="<%= parent.id %>" <%= parent.id === family.parent_id && 'selected' %> ><%= parent.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Jenis Kelamin</label>
+                    <select name="sex" id="sex" class="form-select">
+                        <option value="male" <%= family.sex === 'male' && 'selected' %> >Laki-Laki</option>
+                        <option value="female" <%= family.sex === 'female' && 'selected' %> >Perempuan</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </section>
+</main>
+<%- include('../partials/javascript') %>
+<script>
+    $(document).ready(function(){
+      $('#create-form').on('submit', function(event){
+        event.preventDefault();
+        const data = {
+          name: $('#name').val(),
+          parent_id: $('#parent_id').val(),
+          sex: $('#sex').val()
+        }
+        $.ajax({
+          url: '/api/families/<%= family.id %>',
+          method: 'PATCH',
+          data: JSON.stringify(data),
+          dataType: 'json',
+          contentType: 'application/json'
+      }).done(function (data, textStatus, jqXHR) {
+          alert('Data keluarga berhasil diubah')
+          window.location.href = "/families";
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+          alert('Ada kesalahan saat mengubah data keluarga: ' + textStatus)
+        });
+      })
+    });
+</script>
+</body>
+</html>

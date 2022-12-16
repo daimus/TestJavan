@@ -1,11 +1,13 @@
 import express from 'express';
 import cors from 'cors';
-import routes from '@/api';
+import apiRoutes from '@/api';
+import webRoutes from '@/web';
 import config from '@/config';
 import ILooseObject from '@/interfaces/ILooseObject';
 import { isCelebrateError } from 'celebrate';
 import R from '@/R';
 import _ from 'lodash';
+import path from 'path';
 export default ({ app }: { app: express.Application }) => {
   /**
    * Health Check endpoints
@@ -33,8 +35,13 @@ export default ({ app }: { app: express.Application }) => {
 
   // Transforms the raw string of req.body into json
   app.use(express.json());
-  // Load API routes
-  app.use(config.api.prefix, routes());
+  // Load routes
+  app.use(config.api.prefix, apiRoutes());
+  app.use(webRoutes());
+
+  // Set view engine
+  app.set('views', path.join(__dirname, '../web/views'));
+  app.set('view engine', 'ejs');
 
   app.use((data, req, res, next) => {
     if (data instanceof R) {

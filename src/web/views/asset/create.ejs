@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+</head>
+<body>
+<%- include('../partials/header') %>
+
+<main>
+    <section class="py-5 container">
+        <div class="row">
+            <div class="d-flex justify-content-between">
+                <h1>Tambah Aset</h1>
+            </div>
+            <form id="create-form">
+                <div class="mb-3">
+                    <label class="form-label">Nama</label>
+                    <input type="text" class="form-control" name="name" id="name" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </section>
+</main>
+<%- include('../partials/javascript') %>
+<script>
+    $(document).ready(function(){
+      $('#create-form').on('submit', function(event){
+        event.preventDefault();
+        const data = {
+          name: $('#name').val(),
+          family_id: <%= familyId %>
+        }
+        $.ajax({
+          url: '/api/assets',
+          method: 'POST',
+          data: JSON.stringify(data),
+          dataType: 'json',
+          contentType: 'application/json'
+      }).done(function (data, textStatus, jqXHR) {
+          alert('Data asset berhasil ditambahkan')
+          window.location.href = `/families/<%= familyId %>/assets`;
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+          alert('Terjadi kesalahan saat menambah data asset: ' + textStatus)
+        });
+      })
+    });
+</script>
+</body>
+</html>

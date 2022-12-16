@@ -1,7 +1,9 @@
-import { Service, Inject } from 'typedi';
+import { Inject, Service } from 'typedi';
 import { EventDispatcher, EventDispatcherInterface } from '@/decorators/eventDispatcher';
 import { IAssetInputDTO } from '@/interfaces/IAsset';
 import axios from 'axios';
+import events from '@/subscribers/events';
+import _ from 'lodash';
 
 @Service()
 export default class AssetService {
@@ -24,15 +26,18 @@ export default class AssetService {
   }
 
   public async CreateAsset(assetInputDTO: IAssetInputDTO) {
+    assetInputDTO.price = await this.GetAssetPrice(assetInputDTO.name);
     return this.assetModel.create(assetInputDTO);
   }
 
   public async UpdateAsset(id, assetInputDTO: IAssetInputDTO) {
-    return this.assetModel.update(assetInputDTO, {
+    assetInputDTO.price = await this.GetAssetPrice(assetInputDTO.name);
+    const result = await this.assetModel.update(assetInputDTO, {
       where: {
         id: id,
       },
     });
+    return _.every(result, Boolean);
   }
 
   public async DeleteAsset(id) {
@@ -46,12 +51,20 @@ export default class AssetService {
   public async SyncAssetPrice(filter) {
     const assets = await this.GetAssets(filter);
     for (const asset of assets) {
-      const product = await axios.get(`https://dummyjson.com/products/search?q=${asset.name}`);
-      if (product?.data?.products[0]) {
-        await this.UpdateAsset(asset.id, {
-          price: product.data.products[0].price,
-        });
-      }
+      const price = await this.GetAssetPrice(asset.name);
+      await this.assetModel.update(
+        {
+          price: price,
+        },
+        {
+          where: filter,
+        },
+      );
     }
+  }
+
+  public async GetAssetPrice(name) {
+    const product = await axios.get(`https://dummyjson.com/products/search?q=${name}`);
+    return product?.data?.products[0]?.price || 0;
   }
 }

@@ -1,6 +1,7 @@
 import { Service, Inject } from 'typedi';
 import { EventDispatcher, EventDispatcherInterface } from '@/decorators/eventDispatcher';
 import { IFamilyInputDTO } from '@/interfaces/IFamily';
+import ILooseObject from '@/interfaces/ILooseObject';
 
 @Service()
 export default class FamilyService {
@@ -10,7 +11,7 @@ export default class FamilyService {
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
   ) {}
 
-  public async GetFamilies(filter) {
+  public async GetFamilies(filter = {} as ILooseObject) {
     return this.familyModel.findAll({
       where: filter,
       raw: true,

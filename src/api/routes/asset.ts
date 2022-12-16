@@ -17,8 +17,10 @@ export default (app: Router) => {
     const logger: Logger = Container.get('logger');
     try {
       const assetServiceInstance = Container.get(AssetService);
-
       const filter = {} as ILooseObject;
+      if (req.query?.family_id) {
+        filter.family_id = req.query.family_id;
+      }
       const data = await assetServiceInstance.GetAssets(filter);
       next(new R({ data: data }));
     } catch (e) {
@@ -73,9 +75,9 @@ export default (app: Router) => {
       try {
         const assetServiceInstance = Container.get(AssetService);
         const result = await assetServiceInstance.UpdateAsset(req.params.id, req.body as IAssetInputDTO);
-        if (_.every(result, Boolean)) {
-          const family = await assetServiceInstance.GetAsset(req.params.id);
-          return next(new R({ data: family }));
+        if (result) {
+          const asset = await assetServiceInstance.GetAsset(req.params.id);
+          return next(new R({ data: asset }));
         }
         throw new Error('Unable to update family');
       } catch (e) {
