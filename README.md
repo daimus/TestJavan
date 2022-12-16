@@ -17,13 +17,13 @@ npm install
 ```
 4. Konfigurasi environment variable pada file `.env` (jika belum ada dapat mencontoh file `.env.example`)
 5. Konfigurasi database pada file `database.config.json` (jika belum ada dapat mencontoh file `database.config.json.example`)
-6. Jalankan migrasi untuk membuat table yang dibutuhkan (jika database masih kosong)
+6. Jalankan migrasi untuk membuat table yang dibutuhkan
 ```
 yarn migrate
 atau
 npm run migrate
 ```
-7. Jalankan seeder untuk insert data-data awal yang dibutuhkan (jika database masih kosong)
+7. Jalankan seeder untuk insert data-data awal yang dibutuhkan
 ```
 yarn seed
 atau
